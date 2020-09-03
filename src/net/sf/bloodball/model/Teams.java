@@ -7,7 +7,7 @@ import net.sf.bloodball.model.player.*;
 import net.sf.bloodball.resources.*;
 import net.sf.bloodball.resources.ResourceHandler;
 
-public class Teams {
+public class Teams implements Component {
 	
 	private Team activeTeam;
 	private Team homeTeam;

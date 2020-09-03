@@ -137,7 +137,7 @@ public abstract class ModelTest extends TestCase implements Squares {
 
   protected void movePlayerToSquare(Player player, Point destination) {
     Point position = getPosition(player);
-    new Move(getGame()).perform(position, destination);
+    new Move(getGame(),position, destination).execute();
   }
 
 }

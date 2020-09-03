@@ -5,7 +5,7 @@ import java.awt.Point;
 import net.sf.bloodball.model.player.Player;
 import net.sf.bloodball.util.Dices;
 
-public class Ball {
+public class Ball implements Component {
   private Point position;
   private Field field;
 

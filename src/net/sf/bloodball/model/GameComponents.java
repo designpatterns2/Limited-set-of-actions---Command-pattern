@@ -1,35 +1,31 @@
 package net.sf.bloodball.model;
 
+import net.sf.bloodball.resources.ResourceKeys;
+
 public class GameComponents {
-	private Ball ball;
-	private Field field;
-	private Teams teams;
-	private Game game;
-	
-	public void setBall(Ball ball) {
-		this.ball = ball;
-	}
+
+	private CompositeComponent components;
 
 	public GameComponents(Game game) {
-		this.game = game;
-		instantiateGameComponents();
+		components = new CompositeComponent();
+		components.add(ResourceKeys.FIELD_KEY, new Field());
+		components.add(ResourceKeys.TEAMS_KEY, new Teams(game));
+		components.add(ResourceKeys.BALL_KEY, new Ball((Field) components.getChild(ResourceKeys.FIELD_KEY)));
+	}
+
+	public void setBall(Ball ball) {
+		components.setChild(ResourceKeys.BALL_KEY, ball);
 	}
 
 	public Ball getBall() {
-		return ball;
+		return (Ball) components.getChild(ResourceKeys.BALL_KEY);
 	}
 
 	public Field getField() {
-		return field;
+		return (Field) components.getChild(ResourceKeys.FIELD_KEY);
 	}
 
 	public Teams getTeams() {
-		return teams;
-	}
-
-	private void instantiateGameComponents() {
-		teams = new Teams(game);
-		field = new Field();
-		ball = new Ball(field);
+		return (Teams) components.getChild(ResourceKeys.TEAMS_KEY);
 	}
 }

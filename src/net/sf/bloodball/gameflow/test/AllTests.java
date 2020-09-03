@@ -10,7 +10,7 @@ public class AllTests {
   public static Test suite() {
     TestSuite suite = new TestSuite("model actionstates");
     suite.addTestSuite(GameFlowControllerTest.class);
-    suite.addTestSuite(MoveActionStateTest.class);
+    suite.addTestSuite(MoveActionMethodsStateTest.class);
     suite.addTestSuite(MoveSelectionStateTest.class);
     suite.addTestSuite(SetupBallStateTest.class);
     suite.addTestSuite(SetupPlayerStateTest.class);

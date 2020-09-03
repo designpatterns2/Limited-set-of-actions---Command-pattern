@@ -1,19 +1,15 @@
 package net.sf.bloodball.model.actions;
 
-import de.vestrial.util.error.Ensuring;
 import java.awt.Point;
-import net.sf.bloodball.gameflow.MoveActionState;
-import net.sf.bloodball.model.*;
-import net.sf.bloodball.model.FieldExtents;
+import net.sf.bloodball.model.Field;
 import net.sf.bloodball.model.Game;
-import net.sf.bloodball.model.player.Health;
 import net.sf.bloodball.model.player.Player;
 
-public abstract class MoveAction {
+public class MoveActionMethods {
 
   protected Game game;
 
-  public MoveAction(Game game) {
+  public MoveActionMethods(Game game) {
     this.game = game;
   }
 
@@ -21,33 +17,14 @@ public abstract class MoveAction {
     return game.getTeams().getActiveTeam().isMember(game.getField().getPlayer(position));
   }
 
-  protected void ensureLegalPosition(Point actorPosition, Point actionPosition, String message) {
-    Ensuring.state(isLegal(actorPosition, actionPosition), message);
-  }
-
-  protected boolean inactiveTeamPlayerAt(Point position) {
-    return game.getTeams().getInactiveTeam().isMember(game.getField().getPlayer(position));
-  }
-
-  protected void injure(Point playerPosition) {
-    getPlayerAt(playerPosition).injure(Health.INJURED);
-  }
-
   protected Player getPlayerAt(Point position) {
     return game.getField().getPlayer(position);
   }
 
-  public abstract boolean isLegal(Point actorPosition, Point destination);
 
   protected void knockOver(Point playerPosition) {
     getPlayerAt(playerPosition).knockOver();
     getPlayerAt(playerPosition).endTurn();
-  }
-
-  public abstract void perform(Point actorPosition, Point actionPosition);
-
-  protected boolean pronePlayerAt(Point position) {
-    return getPlayerAt(position).isProne();
   }
 
   protected Point getPosition(Player player) {
@@ -86,7 +63,5 @@ public abstract class MoveAction {
   protected boolean areNeighborSquares(Point first, Point second) {
     return game.getField().neighborSquares(first, second);
   }
-
-  public abstract boolean endsTeamTurn();
 
 }

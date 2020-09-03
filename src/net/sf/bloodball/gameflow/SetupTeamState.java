@@ -2,15 +2,15 @@ package net.sf.bloodball.gameflow;
 
 import java.awt.Point;
 import net.sf.bloodball.model.*;
-import net.sf.bloodball.model.actions.Setup;
-import net.sf.bloodball.model.player.*;
+import net.sf.bloodball.model.actions.RemovePlayer;
+import net.sf.bloodball.model.actions.SetupActionMethods;
 import net.sf.bloodball.model.player.Team;
 
 public class SetupTeamState extends SetupState {
 
   public SetupTeamState(GameFlowController context) {
     super(context);
-    setSetup(new Setup(context.getGame()));
+    setSetup(new SetupActionMethods(context.getGame()));
   }
 
   public void init() {
@@ -24,7 +24,8 @@ public class SetupTeamState extends SetupState {
   }
 
   public void performEndTurnOperation() {
-    getSetup().teamFinished();
+    //Old teamFinished()
+    getGame().startNewTurn();
     if (getGame().getTeams().getActiveTeam() == getGame().getTeams().getOffensiveTeam()) {
       context.setState(new SetupBallState(context));
     } else {
@@ -33,7 +34,7 @@ public class SetupTeamState extends SetupState {
   }
 
   public void squareChoosen(Point position) {
-    if (getSetup().removablePlayerAt(position)) {
+    if (new RemovePlayer(getGame(), position).isLegal()) {
       Team activeTeam = getGame().getTeams().getActiveTeam();
       int removablePlayerNumber = activeTeam.getPlayerNumber(getGame().getField().getPlayer(position));
       removePlayer(position);

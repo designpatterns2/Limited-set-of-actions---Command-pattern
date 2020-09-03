@@ -1,6 +1,8 @@
 package net.sf.bloodball.model.actions.test;
 
 import java.awt.Point;
+
+import net.sf.bloodball.model.actions.Throw;
 import net.sf.bloodball.test.MockBall;
 
 public class ThrowPerformanceTest extends ActionTest {
@@ -23,7 +25,7 @@ public class ThrowPerformanceTest extends ActionTest {
   private void performLegalThrow(Point throwerPosition, Point catcherPosition) {
     setPlayerWithBallTo(getHomeTeamPlayer(), throwerPosition);
     setPlayerTo(getHomeTeamPlayer(), catcherPosition);
-    throwAction.perform(throwerPosition, catcherPosition);
+    new Throw(getGame(), throwerPosition, catcherPosition).execute();
   }
 
   private void setSuccessfulThrowResult() {
@@ -45,7 +47,7 @@ public class ThrowPerformanceTest extends ActionTest {
   public void testIllegalThrow() {
     setPlayerTo(getHomeTeamPlayer(), squareOneOne);
     try {
-      throwAction.perform(squareOneOne, squareOneTwo);
+      new Throw(getGame(), squareOneOne, squareOneTwo).execute();
       fail("IllegalStateException expected");
     } catch (IllegalStateException expected) {
     }

@@ -7,7 +7,6 @@ import net.sf.bloodball.test.ModelTest;
 
 public class SetupPhaseTest extends ModelTest {
 
-  private Setup setupPhase;
   private Point homeSetupZoneSquare;
   private Point guestSetupZoneSquare;
 
@@ -17,7 +16,6 @@ public class SetupPhaseTest extends ModelTest {
 
   protected void setUp() throws Exception {
     super.setUp();
-    setupPhase = new Setup(getGame());
     guestSetupZoneSquare = new Point(FieldExtents.GUEST_SETUP_ZONE.getLowerBound(), 0);
     homeSetupZoneSquare = new Point(FieldExtents.HOME_SETUP_ZONE.getLowerBound(), 0);
   }
@@ -28,73 +26,73 @@ public class SetupPhaseTest extends ModelTest {
 
   public void testBallPositionAfterSetup() {
     setPlayerTo(getHomeTeamPlayer(), homeSetupZoneSquare);
-    setupPhase.setupBall(homeSetupZoneSquare);
+    new SetupBall(getGame(), homeSetupZoneSquare).execute();
     assertEquals(homeSetupZoneSquare, getBallPosition());
   }
 
   public void testIllegalBallSetup() {
     try {
-      setupPhase.setupBall(guestSetupZoneSquare);
+      new SetupBall(getGame(), guestSetupZoneSquare).execute();
       fail();
     } catch (IllegalArgumentException expected) {
     }
   }
 
   public void testLegalityOfZones() {
-    assertTrue(setupPhase.isLegalPlayerSetup(homeSetupZoneSquare));
-    assertTrue(!setupPhase.isLegalPlayerSetup(guestSetupZoneSquare));
+    assertTrue(new SetupPlayer(getGame(), homeSetupZoneSquare).isLegal());
+    assertTrue(!new SetupPlayer(getGame(), guestSetupZoneSquare).isLegal());
     beginGameWithGuestTeam();
-    assertTrue(setupPhase.isLegalPlayerSetup(guestSetupZoneSquare));
-    assertTrue(!setupPhase.isLegalPlayerSetup(homeSetupZoneSquare));
+    assertTrue(new SetupPlayer(getGame(), guestSetupZoneSquare).isLegal());
+    assertTrue(!new SetupPlayer(getGame(), homeSetupZoneSquare).isLegal());
   }
 
   public void testLegalityOfNonemptySquare() {
     setupHomePlayerToHomeSetupZoneSquare();
-    assertTrue(!setupPhase.isLegalPlayerSetup(homeSetupZoneSquare));
+    assertTrue(!new SetupPlayer(getGame(), homeSetupZoneSquare).isLegal());
   }
 
   public void testIsLegalBallSetupToBeginningGuestPlayerSquare() {
     beginGameWithGuestTeam();
     setPlayerTo(getGuestTeamPlayer(), guestSetupZoneSquare);
-    assertTrue(setupPhase.isLegalBallSetup(guestSetupZoneSquare));
+    assertTrue(new SetupBall(getGame(), guestSetupZoneSquare).isLegal());
   }
 
   public void testIsLegalBallSetupToBeginningHomePlayerSquare() {
     setupHomePlayerToHomeSetupZoneSquare();
-    assertTrue(setupPhase.isLegalBallSetup(homeSetupZoneSquare));
+    assertTrue(new SetupBall(getGame(), homeSetupZoneSquare).isLegal());
   }
 
   public void testIsLegalBallSetupToEmptySquare() {
-    assertTrue(!setupPhase.isLegalBallSetup(homeSetupZoneSquare));
+    assertTrue(!(new SetupBall(getGame(), homeSetupZoneSquare).isLegal()));
   }
 
   public void testIsLegalBallSetupToNonBeginningGuestPlayerSquare() {
     setPlayerTo(getGuestTeamPlayer(), guestSetupZoneSquare);
-    assertTrue(!setupPhase.isLegalBallSetup(guestSetupZoneSquare));
+    assertTrue(!(new SetupBall(getGame(), guestSetupZoneSquare).isLegal()));
   }
 
   public void testIsLegalBallSetupToNonBeginningHomePlayerSquare() {
     beginGameWithGuestTeam();
     setPlayerTo(getHomeTeamPlayer(), homeSetupZoneSquare);
-    assertTrue(!setupPhase.isLegalBallSetup(homeSetupZoneSquare));
+    assertTrue(!(new SetupBall(getGame(), homeSetupZoneSquare)).isLegal());
   }
 
   public void testIsLegalGuestPlayerSetup() {
     beginGameWithGuestTeam();
-    assertTrue(setupPhase.isLegalPlayerSetup(guestSetupZoneSquare));
+    assertTrue(new SetupBall(getGame(), guestSetupZoneSquare).isLegal());
   }
 
   public void testIsLegalHomePlayerSetup() {
-    assertTrue(setupPhase.isLegalPlayerSetup(homeSetupZoneSquare));
+    assertTrue(new SetupBall(getGame(), homeSetupZoneSquare).isLegal());
   }
 
   public void testRemovePlayer() {
-    assertTrue(!setupPhase.removablePlayerAt(homeSetupZoneSquare));
+    assertTrue(!new RemovePlayer(getGame(), homeSetupZoneSquare).isLegal());
     setupHomePlayerToHomeSetupZoneSquare();
-    assertTrue(setupPhase.removablePlayerAt(homeSetupZoneSquare));
-    setupPhase.removePlayer(homeSetupZoneSquare);
+    assertTrue(new RemovePlayer(getGame(), homeSetupZoneSquare).isLegal());
+    new RemovePlayer(getGame(), homeSetupZoneSquare).execute();
     setPlayerTo(getGuestTeamPlayer(), homeSetupZoneSquare);
-    assertTrue(!setupPhase.removablePlayerAt(homeSetupZoneSquare));
+    assertTrue(!new RemovePlayer(getGame(), homeSetupZoneSquare).isLegal());
   }
 
 }

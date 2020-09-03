@@ -2,6 +2,7 @@ package net.sf.bloodball.gameflow;
 
 import java.awt.Point;
 import net.sf.bloodball.model.*;
+import net.sf.bloodball.model.actions.SetupPlayer;
 import net.sf.bloodball.model.player.Team;
 
 public class SetupPlayerState extends SetupState {
@@ -26,7 +27,7 @@ public class SetupPlayerState extends SetupState {
   }
 
   public void squareChoosen(Point position) {
-    if (getSetup().isLegalPlayerSetup(position)) {
+    if (new SetupPlayer(getGame(), position).isLegal()) {
       putPlayer(position, team.getPlayerByNumber(playerNumber));
       inciteNewPlayerSelection();
       Notifier.fireSquareChangedEvent(position);

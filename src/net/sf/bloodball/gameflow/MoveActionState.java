@@ -1,6 +1,5 @@
 package net.sf.bloodball.gameflow;
 
-import de.vestrial.util.error.ShouldNeverBeReachedException;
 import java.awt.Point;
 import java.util.*;
 import net.sf.bloodball.model.*;
@@ -8,19 +7,15 @@ import net.sf.bloodball.model.actions.*;
 import net.sf.bloodball.model.player.*;
 
 public class MoveActionState extends State {
-  private List actions;
+
   private Block block;
   private State undoState;
+  private List commands = new ArrayList<ActionCommand>();
 
   public MoveActionState(GameFlowController context, State undoState) {
     super(context);
     this.undoState = undoState;
     block = new Block(context.getGame());
-    actions = new ArrayList();
-    actions.add(block);
-    actions.add(new HandOff(context.getGame()));
-    actions.add(new Move(context.getGame()));
-    actions.add(new Throw(context.getGame()));
   }
 
   public void deselectInTurnOperation() {
@@ -98,15 +93,20 @@ public class MoveActionState extends State {
 
   public void squareChoosen(Point position) {
     Point activePosition = context.getActivePlayerPosition();
-    for (Iterator actions = this.actions.iterator(); actions.hasNext();) {
-      MoveAction action = (MoveAction) actions.next();
-      if (action.isLegal(context.getActivePlayerPosition(), position)) {
-        action.perform(activePosition, position);
+    block.setPositions(activePosition, position);
+    commands.add(block);
+    commands.add(new HandOff(context.getGame(), activePosition, position));
+    commands.add(new Move(context.getGame(), activePosition, position));
+    commands.add(new Throw(context.getGame(), activePosition, position));
+    for (Iterator i = commands.iterator(); i.hasNext();) {
+      ActionCommand command = (ActionCommand) i.next();
+      if (command.isLegal()) {
+        command.execute();
         setMayEndTurn(context.getActivePlayer().mayPickUpBall());
         updateInturnOperation();
         Notifier.fireSquareChangedEvent(activePosition);
         Notifier.fireSquareChangedEvent(position);
-        if (action.endsTeamTurn()) {
+        if (command.endsTeamTurn()) {
           context.deactivatePlayer();
         }
         if (hasToStopActing()) {

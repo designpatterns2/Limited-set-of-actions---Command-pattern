@@ -2,13 +2,14 @@ package net.sf.bloodball.model.actions;
 
 import java.awt.Point;
 import net.sf.bloodball.model.Game;
-import net.sf.bloodball.model.player.*;
+import net.sf.bloodball.model.player.Team;
+import net.sf.bloodball.model.player.Player;
 
-public abstract class SetupAction {
+public class SetupActionMethods {
 	
 	private Game game;
 
-	public SetupAction(Game game) {
+	public SetupActionMethods(Game game) {
 		this.game = game;
 	}
 	
@@ -21,7 +22,7 @@ public abstract class SetupAction {
 		return game.getTeams().isActiveTeam(team) && maySetup(team) && player.isReserve();
 	}
 
-  protected boolean isNotOccupied(Point position) {
+  	protected boolean isNotOccupied(Point position) {
     return game.getField().getPlayer(position) == Player.NO_PLAYER;
   }
 

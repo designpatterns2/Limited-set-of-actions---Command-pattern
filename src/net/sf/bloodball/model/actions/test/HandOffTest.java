@@ -2,6 +2,7 @@ package net.sf.bloodball.model.actions.test;
 
 import java.awt.Point;
 import net.sf.bloodball.model.FieldExtents;
+import net.sf.bloodball.model.actions.HandOff;
 import net.sf.bloodball.model.player.Player;
 
 public class HandOffTest extends ActionTest {
@@ -13,7 +14,7 @@ public class HandOffTest extends ActionTest {
   private void performLegalHandOffToSquareZeroTwo() {
     setPlayerWithBallTo(getHomeTeamPlayer(), squareZeroOne);
     setPlayerTo(getHomeTeamPlayer(), squareZeroTwo);
-    handOff.perform(squareZeroOne, squareZeroTwo);
+    new HandOff(getGame(), squareZeroOne, squareZeroTwo).execute();
   }
 
   public void testHandOffChancesBallPosition() {
@@ -29,7 +30,7 @@ public class HandOffTest extends ActionTest {
   public void testIllegalHandOff() {
     setPlayerTo(getHomeTeamPlayer(), squareOneOne);
     try {
-      handOff.perform(squareOneOne, squareOneTwo);
+      new HandOff(getGame(), squareOneOne, squareOneTwo).execute();
       fail("IllegalArgumentException expected");
     } catch (IllegalStateException expected) {
     }
@@ -37,44 +38,44 @@ public class HandOffTest extends ActionTest {
 
   public void testIsLegalToEmptySquare() {
     setPlayerTo(getHomeTeamPlayer(), squareZeroOne);
-    assertTrue(!handOff.isLegal(squareZeroOne, squareZeroTwo));
+    assertTrue(!new HandOff(getGame(), squareZeroOne, squareZeroTwo).isLegal());
   }
 
   public void testIsLegalToNeighborFriend() {
     setPlayerWithBallTo(getHomeTeamPlayer(), squareZeroTwo);
     setPlayerTo(getHomeTeamPlayer(), squareZeroOne);
-    assertTrue(handOff.isLegal(squareZeroTwo, squareZeroOne));
+    assertTrue(new HandOff(getGame(), squareZeroTwo, squareZeroOne).isLegal());
   }
 
   public void testIsLegalToNeighborOpponent() {
     setPlayerTo(getHomeTeamPlayer(), squareZeroTwo);
     setPlayerTo(getGuestTeamPlayer(), squareZeroOne);
-    assertTrue(!handOff.isLegal(squareZeroTwo, squareZeroOne));
+    assertTrue(!new HandOff(getGame(), squareZeroTwo, squareZeroOne).isLegal());
   }
 
   public void testIsLegalToProneFriend() {
     setPlayerTo(getHomeTeamPlayer(), squareZeroTwo);
     setPlayerTo(getHomeTeamPlayer(), squareZeroOne);
     getLegalPlayerAt(squareZeroOne).knockOver();
-    assertTrue(!handOff.isLegal(squareZeroTwo, squareZeroOne));
+    assertTrue(!new HandOff(getGame(), squareZeroTwo, squareZeroOne).isLegal());
   }
 
   public void testIsLegalToUnreachableFriend() {
     setPlayerTo(getHomeTeamPlayer(), squareZeroOne);
     setPlayerTo(getHomeTeamPlayer(), squareZeroThree);
-    assertTrue(!handOff.isLegal(squareZeroOne, squareZeroThree));
+    assertTrue(!new HandOff(getGame(), squareZeroOne, squareZeroThree).isLegal());
   }
 
   public void testIsLegalWithoutBall() {
     setPlayerTo(getHomeTeamPlayer(), squareZeroOne);
     setPlayerTo(getHomeTeamPlayer(), squareZeroTwo);
-    assertTrue(!handOff.isLegal(squareZeroOne, squareZeroTwo));
+    assertTrue(!new HandOff(getGame(), squareZeroOne, squareZeroTwo).isLegal());
   }
 
   public void testLegalityAfterMove() throws Exception {
     Player player = setPlayerWithBallTo(getHomeTeamPlayer(), squareOneOne);
     movePlayerToSquare(player, squareOneTwo);
     setPlayerTo(getHomeTeamPlayer(), squareOneThree);
-    assertTrue(handOff.isLegal(squareOneTwo, squareOneThree));
+    assertTrue(new HandOff(getGame(), squareOneTwo, squareOneThree).isLegal());
   }
 }

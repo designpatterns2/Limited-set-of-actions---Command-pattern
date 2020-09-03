@@ -1,11 +1,10 @@
 package net.sf.bloodball;
 
-import java.util.Locale;
-import net.sf.bloodball.gameflow.GameFlowController;
-import net.sf.bloodball.model.Game;
-import net.sf.bloodball.resources.*;
 import net.sf.bloodball.resources.ResourceHandler;
-import net.sf.bloodball.view.*;
+import net.sf.bloodball.resources.ResourceKeys;
+import net.sf.bloodball.view.SplashScreen;
+
+import java.util.Locale;
 
 public class BloodBall {
 

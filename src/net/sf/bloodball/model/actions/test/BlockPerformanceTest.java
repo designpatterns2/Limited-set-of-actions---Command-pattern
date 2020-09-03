@@ -1,6 +1,7 @@
 package net.sf.bloodball.model.actions.test;
 
 import net.sf.bloodball.model.*;
+import net.sf.bloodball.model.actions.Block;
 import net.sf.bloodball.model.player.*;
 import net.sf.bloodball.test.*;
 import java.awt.Point;
@@ -16,14 +17,14 @@ public class BlockPerformanceTest extends ActionTest {
   private void performBlock(Point blockerPosition, Point blockedPosition) {
     setPlayerTo(blocker, blockerPosition);
     setPlayerTo(blockedPlayer, blockedPosition);
-    block.perform(blockerPosition, blockedPosition);
+    new Block(getGame(), blockerPosition, blockedPosition).execute();
   }
 
   private void performProneBlock(Point blockerPosition, Point blockedPosition) {
     setPlayerTo(blocker, blockerPosition);
     setPlayerTo(blockedPlayer, blockedPosition);
     blockedPlayer.knockOver();
-    block.perform(blockerPosition, blockedPosition);
+    new Block(getGame(), blockerPosition, blockedPosition).execute();
   }
 
   protected void setUp() throws Exception {

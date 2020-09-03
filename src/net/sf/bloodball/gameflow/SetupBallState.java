@@ -5,7 +5,6 @@ import net.sf.bloodball.model.actions.*;
 import java.awt.Point;
 
 public class SetupBallState extends State {
-	private Setup setupPhase = new Setup(getGame());
 
 	public SetupBallState(GameFlowController context) {
 		super(context);
@@ -22,8 +21,9 @@ public class SetupBallState extends State {
 	}
 
 	public void squareChoosen(Point position) {
-		if (setupPhase.isLegalBallSetup(position)) {
-			setupPhase.setupBall(position);
+		SetupBall setupBall = new SetupBall(getGame(), position);
+		if (setupBall.isLegal()) {
+			setupBall.execute();
 			setMayEndTurn(true);
 		}
 	}

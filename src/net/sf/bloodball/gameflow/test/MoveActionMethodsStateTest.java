@@ -3,13 +3,12 @@ package net.sf.bloodball.gameflow.test;
 import java.awt.Point;
 import net.sf.bloodball.gameflow.*;
 import net.sf.bloodball.model.FieldExtents;
-import net.sf.bloodball.model.actions.Move;
 import net.sf.bloodball.model.player.ExtraMoveMode;
 import net.sf.bloodball.model.player.Player;
 
-public class MoveActionStateTest extends ActionStateTest {
+public class MoveActionMethodsStateTest extends ActionStateTest {
 
-  public MoveActionStateTest(String name) {
+  public MoveActionMethodsStateTest(String name) {
     super(name);
   }
 

@@ -1,5 +1,6 @@
 package net.sf.bloodball.model.actions.test;
 
+import net.sf.bloodball.model.actions.Move;
 import net.sf.bloodball.model.player.Player;
 
 public class MovePerformanceTest extends ActionTest {
@@ -10,7 +11,7 @@ public class MovePerformanceTest extends ActionTest {
 	
 	public void testBallMovesWithPossessor() {
 		Player actor = setPlayerWithBallTo(getHomeTeamPlayer(), squareZeroOne);
-		moveAction.perform(squareZeroOne, squareZeroTwo);
+		new Move(getGame(),squareZeroOne, squareZeroTwo).execute();
 		assertEquals(squareZeroTwo, getBallPosition());
 		assertTrue(actor.inBallPossession());
 	}
@@ -18,7 +19,7 @@ public class MovePerformanceTest extends ActionTest {
 	public void testMoveToIllegalSquare() {
 		setPlayerTo(getHomeTeamPlayer(), squareZeroOne);
 		try {
-			moveAction.perform(squareZeroOne, squareZeroThree);
+			new Move(getGame(), squareZeroOne, squareZeroThree).execute();
 			fail();
 		} catch (IllegalStateException expected) {
 		}
@@ -26,14 +27,14 @@ public class MovePerformanceTest extends ActionTest {
 	
 	public void testPlayerPositionChangesWithLegalMove() {
 		Player actor = setPlayerTo(getHomeTeamPlayer(), squareZeroOne);
-		moveAction.perform(squareZeroOne, squareZeroTwo);
+		new Move(getGame(),squareZeroOne, squareZeroTwo).execute();
 		assertSame(getLegalPlayerAt(squareZeroTwo), actor);
 	}
 	
 	public void testPlayerTurnEndedAfterMoving() {
 		Player homePlayer = getHomeTeamPlayer();
 		setPlayerTo(homePlayer, squareZeroOne);
-		moveAction.perform(squareZeroOne, squareZeroTwo);
+		new Move(getGame(),squareZeroOne, squareZeroTwo).execute();
 		homePlayer.endTurn();
 		assertTrue(!homePlayer.isAtCall());
 	}

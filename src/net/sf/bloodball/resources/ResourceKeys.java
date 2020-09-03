@@ -41,4 +41,13 @@ public interface ResourceKeys {
   public static final String HEALTH_KO = "KO'd";
   public static final String HEALTH_INJURED = "Seriously injured";
   public static final String HEALTH_DEAD = "Dead";
+
+  public static final String FIELD_KEY = "Field";
+  public static final String BALL_KEY = "Ball";
+  public static final String TEAMS_KEY = "Teams";
+
+  public static final String HOME_TEAM_KEY = "HomeTeam";
+  public static final String GUEST_TEAM_KEY = "GuestTeam";
+  public static final String ACTIVE_TEAM_KEY = "ActiveTeam";
+  public static final String OFFENSIVE_TEAM_KEY = "OffensiveTeam";
 }

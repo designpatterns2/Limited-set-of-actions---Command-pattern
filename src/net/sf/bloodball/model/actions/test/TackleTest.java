@@ -1,5 +1,6 @@
 package net.sf.bloodball.model.actions.test;
 
+import net.sf.bloodball.model.actions.Move;
 import net.sf.bloodball.model.player.Player;
 
 public class TackleTest extends ActionTest {
@@ -24,7 +25,7 @@ public class TackleTest extends ActionTest {
 		setFailingTackleDice();
 		Player actor = setPlayerTo(getHomeTeamPlayer(), squareOneTwo);
 		setPlayerTo(getGuestTeamPlayer(), squareZeroOne);
-		moveAction.perform(squareZeroOne, squareOneOne);
+		new Move(getGame(), squareZeroOne, squareOneOne).execute();
 		assertTrue(!actor.isProne());
 	}
 	
@@ -32,7 +33,7 @@ public class TackleTest extends ActionTest {
 		setSucceedingTackleDice();
 		Player actor = setPlayerTo(getHomeTeamPlayer(), squareTwoTwo);
 		setPlayerTo(getGuestTeamPlayer(), squareZeroTwo);
-		moveAction.perform(squareTwoTwo, squareOneTwo);
+		new Move(getGame(), squareTwoTwo, squareOneTwo).execute();
 		assertTrue(!actor.isProne());
 	}
 	
@@ -42,7 +43,7 @@ public class TackleTest extends ActionTest {
 		setPlayerTo(getGuestTeamPlayer(), squareZeroOne);
 		setPlayerTo(getGuestTeamPlayer(), squareZeroFour);
 		getPlayerAt(squareZeroFour).knockOver();
-		moveAction.perform(squareOneTwo, squareOneThree);
+		new Move(getGame(), squareOneTwo, squareOneThree).execute();
 		assertTrue(!getPlayerAt(squareOneThree).isProne());
 	}
 	
@@ -50,7 +51,7 @@ public class TackleTest extends ActionTest {
 		setPlayerTo(getGuestTeamPlayer(), squareZeroOne);
 		setPlayerTo(getHomeTeamPlayer(), squareOneTwo);
 		setSucceedingTackleDice();
-		moveAction.perform(squareOneTwo, squareTwoTwo);
+		new Move(getGame(), squareOneTwo, squareTwoTwo).execute();
 		assertTrue(!getPlayerAt(squareTwoTwo).isProne());
 	}
 	
@@ -58,7 +59,7 @@ public class TackleTest extends ActionTest {
 		setSucceedingTackleDice();
 		Player actor = setPlayerTo(getHomeTeamPlayer(), squareOneTwo);
 		setPlayerTo(getHomeTeamPlayer(), squareZeroOne);
-		moveAction.perform(squareZeroOne, squareOneOne);
+		new Move(getGame(), squareZeroOne, squareOneOne).execute();
 		assertTrue(!actor.isProne());
 	}
 	
@@ -66,7 +67,7 @@ public class TackleTest extends ActionTest {
 		setSucceedingTackleDice();
 		Player actor = setPlayerWithBallTo(getHomeTeamPlayer(), squareOneTwo);
 		setPlayerTo(getGuestTeamPlayer(), squareOneOne);
-		moveAction.perform(squareOneTwo, squareTwoTwo);
+		new Move(getGame(), squareOneTwo, squareTwoTwo).execute();
 		assertTrue(actor.isProne());
 		assertTrue(getBallPosition() != squareTwoTwo);
 	}

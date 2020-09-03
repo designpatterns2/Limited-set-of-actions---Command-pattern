@@ -1,5 +1,6 @@
 package net.sf.bloodball.model.actions.test;
 
+import net.sf.bloodball.model.actions.Move;
 import net.sf.bloodball.model.player.ExtraMoveMode;
 import net.sf.bloodball.model.player.Player;
 import net.sf.bloodball.model.player.SprintMoveMode;
@@ -12,24 +13,24 @@ public class MoveLegalityTest extends ActionTest {
 
   public void testIsLegalToFarField() throws Exception {
     setPlayerTo(getHomeTeamPlayer(), squareZeroOne);
-    assertTrue(!moveAction.isLegal(squareZeroOne, squareZeroThree));
+    assertTrue(!new Move(getGame(), squareZeroOne, squareZeroThree).isLegal());
   }
 
   public void testIsLegalToFriedOccupiedField() throws Exception {
     setPlayerTo(getHomeTeamPlayer(), squareZeroTwo);
     setPlayerTo(getHomeTeamPlayer(), squareZeroOne);
-    assertTrue(!moveAction.isLegal(squareZeroTwo, squareZeroOne));
+    assertTrue(!new Move(getGame(), squareZeroTwo, squareZeroOne).isLegal());
   }
 
   public void testIsLegalToNeighborEmptyField() throws Exception {
     setPlayerTo(getHomeTeamPlayer(), squareZeroOne);
-    assertTrue(moveAction.isLegal(squareZeroOne, squareZeroTwo));
+    assertTrue(new Move(getGame(), squareZeroOne, squareZeroTwo).isLegal());
   }
 
   public void testIsLegalToOpponentOccupiedField() throws Exception {
     setPlayerTo(getHomeTeamPlayer(), squareZeroTwo);
     setPlayerTo(getGuestTeamPlayer(), squareZeroOne);
-    assertTrue(!moveAction.isLegal(squareZeroTwo, squareZeroOne));
+    assertTrue(!new Move(getGame(), squareZeroTwo, squareZeroOne).isLegal());
   }
 
   public void testIsPlayerOfActiveTeamMoveable() {
@@ -50,14 +51,14 @@ public class MoveLegalityTest extends ActionTest {
     Player player = setPlayerTo(getHomeTeamPlayer(), squareZeroOne);
     player.setMoveMode(new SprintMoveMode(player));
     setPlayerTo(getGuestTeamPlayer(), squareZeroThree);
-    assertTrue(!moveAction.isLegal(squareZeroOne, squareZeroTwo));
+    assertTrue(!new Move(getGame(), squareZeroOne, squareZeroTwo).isLegal());
   }
 
   public void testExtraMovementIntoTackleZone() throws Exception {
     Player player = setPlayerTo(getHomeTeamPlayer(), squareZeroOne);
     player.setMoveMode(new ExtraMoveMode(player));
     setPlayerTo(getGuestTeamPlayer(), squareZeroThree);
-    assertTrue(!moveAction.isLegal(squareZeroOne, squareZeroTwo));
+    assertTrue(!new Move(getGame(), squareZeroOne, squareZeroTwo).isLegal());
   }
   
   public void testBallPossessorMoveable() throws Exception {

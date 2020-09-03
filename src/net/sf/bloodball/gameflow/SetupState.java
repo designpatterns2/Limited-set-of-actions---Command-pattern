@@ -1,32 +1,35 @@
 package net.sf.bloodball.gameflow;
 
 import java.awt.Point;
-import net.sf.bloodball.model.actions.Setup;
+
+import net.sf.bloodball.model.actions.RemovePlayer;
+import net.sf.bloodball.model.actions.SetupActionMethods;
+import net.sf.bloodball.model.actions.SetupPlayer;
 import net.sf.bloodball.model.player.Player;
 
 public abstract class SetupState extends State {
-  private Setup setup;
+  private SetupActionMethods setupActionMethods;
 
   public SetupState(GameFlowController context) {
     super(context);
-    setup = new Setup(context.getGame());
+    setupActionMethods = new SetupActionMethods(context.getGame());
   }
 
   protected void putPlayer(Point position, Player player) {
-    setup.setupPlayer(position, player);
+    new SetupPlayer(getGame(), position, player).execute();
   }
 
   protected void removePlayer(Point position) {
-    setup.removePlayer(position);
+    new RemovePlayer(getGame(), position).execute();
     setMayEndTurn(false);
   }
 
-  public Setup getSetup() {
-    return setup;
+  public SetupActionMethods getSetup() {
+    return setupActionMethods;
   }
 
-  protected void setSetup(Setup setup) {
-    this.setup = setup;
+  protected void setSetup(SetupActionMethods setupActionMethods) {
+    this.setupActionMethods = setupActionMethods;
   }
 
 }

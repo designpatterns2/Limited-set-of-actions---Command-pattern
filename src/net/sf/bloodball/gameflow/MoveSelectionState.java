@@ -3,7 +3,6 @@ package net.sf.bloodball.gameflow;
 import java.awt.Point;
 import net.sf.bloodball.model.*;
 import net.sf.bloodball.model.actions.Move;
-import net.sf.bloodball.model.player.Team;
 
 public class MoveSelectionState extends State {
   public MoveSelectionState(GameFlowController context) {

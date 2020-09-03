@@ -2,9 +2,11 @@ package net.sf.bloodball.model.player;
 
 import java.awt.Color;
 import java.util.*;
+
+import net.sf.bloodball.model.Component;
 import net.sf.bloodball.model.Game;
 
-public class Team {
+public class Team implements Component {
 	
 	public static final Team NO_TEAM = new NoTeam();
 

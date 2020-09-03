@@ -1,17 +1,58 @@
 package net.sf.bloodball.model.actions;
 
-import net.sf.bloodball.gameflow.MoveActionState;
+import de.vestrial.util.error.Ensuring;
 import net.sf.bloodball.model.*;
 import net.sf.bloodball.model.player.Health;
 import net.sf.bloodball.model.player.Player;
 import net.sf.bloodball.util.*;
-import de.vestrial.util.*;
 import java.awt.Point;
 
-public class Block extends MoveAction {
+public class Block implements ActionCommand {
+
+  private Field field;
+  private Teams teams;
+  private Point actorPosition;
+  private Point actionPosition;
+  private MoveActionMethods moveActionMethods;
 
   public Block(Game game) {
-    super(game);
+    field = game.getField();
+    teams = game.getTeams();
+    moveActionMethods = new MoveActionMethods(game);
+  }
+
+  public Block(Game game, Point actorPosition, Point actionPosition) {
+    field = game.getField();
+    teams = game.getTeams();
+    this.actorPosition = actorPosition;
+    this.actionPosition = actionPosition;
+    moveActionMethods = new MoveActionMethods(game);
+  }
+
+  @Override
+  public void execute() {
+    Player blocker = moveActionMethods.getPlayerAt(actorPosition);
+    Player blocked = moveActionMethods.getPlayerAt(actionPosition);
+    Ensuring.state(isLegal(), "No blockable player at position: " + actionPosition);
+    executeBlockingRoll(blocker, blocked);
+    blocker.endTurn();
+  }
+
+  @Override
+  public boolean isLegal() {
+    Player blocker = moveActionMethods.getPlayerAt(actorPosition);
+    Player blocked = moveActionMethods.getPlayerAt(actionPosition);
+    return moveActionMethods.areNeighbors(blocker, blocked) && moveActionMethods.areOpponents(blocker, blocked) && !blocker.hasActed();
+  }
+
+  @Override
+  public boolean endsTeamTurn() {
+    return false;
+  }
+
+  public void setPositions(Point actorPosition, Point actionPosition) {
+    this.actorPosition = actorPosition;
+    this.actionPosition = actionPosition;
   }
 
   private void executeBlockingRoll(Player blocker, Player blocked) {
@@ -22,26 +63,12 @@ public class Block extends MoveAction {
     }
   }
 
-  public boolean isLegal(Point blockerPosition, Point blockedPosition) {
-    Player blocker = getPlayerAt(blockerPosition);
-    Player blocked = getPlayerAt(blockedPosition);
-    return areNeighbors(blocker, blocked) && areOpponents(blocker, blocked) && !blocker.hasActed();
-  }
-
   public boolean mayBlock(Player blocker) {
     if (blocker == Player.NO_PLAYER || !blocker.isOnField() || blocker.hasActed()) {
       return false;
     }
-    Point position = game.getField().getPlayerPosition(blocker);
-    return game.getField().inTackleZone(position, game.getTeams().getOpponentTeam(blocker.getTeam()));
-  }
-
-  public void perform(Point actorPosition, Point destination) {
-    Player blocker = getPlayerAt(actorPosition);
-    Player blocked = getPlayerAt(destination);
-    ensureLegalPosition(actorPosition, destination, "No blockable player at position: " + destination);
-    executeBlockingRoll(blocker, blocked);
-    blocker.endTurn();
+    Point position = field.getPlayerPosition(blocker);
+    return field.inTackleZone(position, teams.getOpponentTeam(blocker.getTeam()));
   }
 
   private void rollBlockTable(Player blocker, Player blocked) {
@@ -60,28 +87,18 @@ public class Block extends MoveAction {
       blocked.injure(Health.STUNNED);
     } else {
       switch (result) {
-        case 3 :
         case 4 :
           blocker.knockOver();
           break;
-        case 5 :
-        case 6 :
         case 7 :
           break;
         case 8 :
           blocker.knockOver();
           blocked.knockOver();
           break;
-        case 9 :
-        case 10 :
         case 11 :
           blocked.knockOver();
       }
     }
   }
-  
-  public boolean endsTeamTurn() {
-    return false;
-  }
-
 }

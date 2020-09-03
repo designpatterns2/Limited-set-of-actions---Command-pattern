@@ -1,8 +1,5 @@
 package net.sf.bloodball.model.player.test;
 
-import de.vestrial.util.awt.Points;
-import java.awt.Point;
-import net.sf.bloodball.model.actions.Move;
 import net.sf.bloodball.model.player.Player;
 import net.sf.bloodball.test.MockBall;
 import net.sf.bloodball.test.ModelTest;

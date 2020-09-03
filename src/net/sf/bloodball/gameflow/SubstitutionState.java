@@ -6,8 +6,7 @@ import net.sf.bloodball.model.actions.*;
 import net.sf.bloodball.model.player.Team;
 
 public class SubstitutionState extends State {
-  
-  private Substitution substitution = new Substitution(getGame());
+
   private int playerNumber;
 
 	public SubstitutionState(GameFlowController context, int playerNumber) {
@@ -25,12 +24,13 @@ public class SubstitutionState extends State {
 	}
 
 	public void squareChoosen(Point position) {
-    if (substitution.isLegal(position)) {
-      substitution.perform(position, playerNumber);
-      inciteTurnBeginSelectionState();
-      Notifier.fireSquareChangedEvent(position);
-      Notifier.fireDugOutChangedEvent(getActiveTeam(), playerNumber);
-    }
+		Substitution substitution = new Substitution(getGame(), position, playerNumber);
+		if (substitution.isLegal()) {
+		  substitution.execute();
+		  inciteTurnBeginSelectionState();
+		  Notifier.fireSquareChangedEvent(position);
+		  Notifier.fireDugOutChangedEvent(getActiveTeam(), playerNumber);
+		}
 	}
 
 	protected void inciteTurnBeginSelectionState() {

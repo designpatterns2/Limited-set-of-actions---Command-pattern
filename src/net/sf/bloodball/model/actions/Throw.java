@@ -3,17 +3,61 @@ package net.sf.bloodball.model.actions;
 import de.vestrial.util.awt.Points;
 import java.awt.Point;
 import java.util.*;
-import net.sf.bloodball.gameflow.MoveActionState;
+
+import de.vestrial.util.error.Ensuring;
 import net.sf.bloodball.model.*;
 import net.sf.bloodball.model.player.*;
 import net.sf.bloodball.util.Dices;
 
-public class Throw extends MoveAction {
+public class Throw implements ActionCommand {
 
   private double INTERCEPTION_DISTANCE = 0.5;
 
+  private Game game;
+  private Field field;
+  private Ball ball;
+  private Teams teams;
+  private Point actorPosition;
+  private Point actionPosition;
+
+  private MoveActionMethods moveActionMethods;
+
   public Throw(Game game) {
-    super(game);
+    this.game = game;
+    field = game.getField();
+    ball = game.getBall();
+    teams = game.getTeams();
+    moveActionMethods = new MoveActionMethods(game);
+  }
+
+  public Throw(Game game, Point actorPosition, Point actionPosition) {
+    this.game = game;
+    field = game.getField();
+    ball = game.getBall();
+    teams = game.getTeams();
+    this.actorPosition = actorPosition;
+    this.actionPosition = actionPosition;
+    moveActionMethods = new MoveActionMethods(game);
+  }
+
+
+  @Override
+  public void execute() {
+    Ensuring.state(isLegal(), "Ball cannot be thrown to " + actionPosition);
+    executeThrowingRoll(actorPosition, actionPosition);
+    game.startNewTurn();
+  }
+
+  @Override
+  public boolean isLegal() {
+    Player thrower = moveActionMethods.getPlayerAt(actorPosition);
+    Player catcher = moveActionMethods.getPlayerAt(actionPosition);
+    return !thrower.hasMoved() && thrower.inBallPossession() && moveActionMethods.areCollegues(thrower, catcher) && !catcher.isProne() && isInReach(actorPosition, actionPosition);
+  }
+
+  @Override
+  public boolean endsTeamTurn() {
+    return true;
   }
 
   private void executeThrowingRoll(Point throwerPosition, Point catcherPosition) {
@@ -23,29 +67,18 @@ public class Throw extends MoveAction {
   }
 
   public boolean isInReach(Point first, Point second) {
-    return !areNeighborSquares(first, second) && Points.getDistance(first, second) <= 16;
+    return !moveActionMethods.areNeighborSquares(first, second) && Points.getDistance(first, second) <= 16;
   }
 
-  public boolean isLegal(Point actorPosition, Point actionPosition) {
-    Player thrower = getPlayerAt(actorPosition);
-    Player catcher = getPlayerAt(actionPosition);
-    return !thrower.hasMoved() && thrower.inBallPossession() && areCollegues(thrower, catcher) && !catcher.isProne() && isInReach(actorPosition, actionPosition);
-  }
-
-  public void perform(Point actorPosition, Point actionPosition) {
-    ensureLegalPosition(actorPosition, actionPosition, "Ball cannot be thrown to " + actionPosition);
-    executeThrowingRoll(actorPosition, actionPosition);
-    game.startNewTurn();
-  }
 
   private void rollThrowTable(Point throwerPosition, Point catcherPosition, int missLimit, int catchLimit) {
-    Player thrower = getPlayerAt(throwerPosition);
-    Player catcher = getPlayerAt(catcherPosition);
-    int throwerSurrounders = game.getField().playersInTackleZoneCount(throwerPosition, game.getTeams().getOpponentTeam(thrower.getTeam()));
-    int catcherSurrounders = game.getField().playersInTackleZoneCount(catcherPosition, game.getTeams().getOpponentTeam(catcher.getTeam()));
+    Player thrower = moveActionMethods.getPlayerAt(throwerPosition);
+    Player catcher = moveActionMethods.getPlayerAt(catcherPosition);
+    int throwerSurrounders = field.playersInTackleZoneCount(throwerPosition, teams.getOpponentTeam(thrower.getTeam()));
+    int catcherSurrounders = field.playersInTackleZoneCount(catcherPosition, teams.getOpponentTeam(catcher.getTeam()));
     int result = Dices.D6.roll(2) + thrower.getType().getThrowingSkill() + catcher.getType().getCoolness();
     result -= throwerSurrounders + catcherSurrounders;
-    game.getField().getPlayer(game.getBall().getPosition()).dropBall();
+    field.getPlayer(ball.getPosition()).dropBall();
     if (result < missLimit) {
       interceptBall(throwerPosition, catcherPosition);
     } else if (result < catchLimit) {
@@ -56,26 +89,26 @@ public class Throw extends MoveAction {
   }
 
   private void catchBall(Point catcherPosition) {
-    game.getBall().setPosition(catcherPosition);
-    game.getField().getPlayer(catcherPosition).catchBall();
+    ball.setPosition(catcherPosition);
+    field.getPlayer(catcherPosition).catchBall();
   }
 
   private void interceptBall(Point throwerPosition, Point catcherPosition) {
-    Player thrower = getPlayerAt(throwerPosition);
+    Player thrower = moveActionMethods.getPlayerAt(throwerPosition);
     Point interceptionPosition = getInterceptionPosition(throwerPosition, catcherPosition);
     if (interceptionPosition != null) {
-      game.getBall().setPosition(interceptionPosition);
-      game.getField().getPlayer(interceptionPosition).catchBall();
-    } else if (isOpponentTackleZone(thrower, throwerPosition)) {
-      game.getBall().scatter();
+      ball.setPosition(interceptionPosition);
+      field.getPlayer(interceptionPosition).catchBall();
+    } else if (moveActionMethods.isOpponentTackleZone(thrower, throwerPosition)) {
+      ball.scatter();
     } else {
       missBall(catcherPosition);
     }
   }
 
   private void missBall(Point catcherPosition) {
-    game.getBall().setPosition(catcherPosition);
-    game.getBall().scatter();
+    ball.setPosition(catcherPosition);
+    ball.scatter();
   }
 
   private Point getInterceptionPosition(Point throwerPosition, Point catcherPosition) {
@@ -101,8 +134,8 @@ public class Throw extends MoveAction {
     for (int x = 0; x < FieldExtents.SIZE.width; x++) {
       for (int y = 0; y < FieldExtents.SIZE.height; y++) {
         Point position = new Point(x, y);
-        Player player = game.getField().getPlayer(position);
-        Team opponentTeam = game.getTeams().getInactiveTeam();
+        Player player = field.getPlayer(position);
+        Team opponentTeam = teams.getInactiveTeam();
         if (!player.isProne() && opponentTeam.isMember(player) && isInterceptableAt(throwerPosition, position, catcherPosition)) {
           interceptionPositions.add(position);
         }
@@ -127,8 +160,4 @@ public class Throw extends MoveAction {
     double distanceToCatcher = Points.getDistance(interceptorPosition, catcherPosition);
     return distanceToThrower < distance && distanceToCatcher < distance;
   }
-  public boolean endsTeamTurn() {
-    return true;
-  }
-
 }

@@ -4,7 +4,7 @@ import de.vestrial.util.*;
 import java.awt.Point;
 import net.sf.bloodball.model.player.*;
 
-public class Field {
+public class Field implements Component {
   private Player[][] squares = new Player[FieldExtents.SIZE.width][FieldExtents.SIZE.height];
 
   public Field() {
